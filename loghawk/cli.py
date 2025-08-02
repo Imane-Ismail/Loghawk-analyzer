@@ -1,11 +1,11 @@
 import sys
 import os
 import pyfiglet
-from loghawk.scanner import LogHawk
+from loghawk.scanner import loghawk
 
 def main():
     # Create banner with tool name
-    ascii_banner = pyfiglet.figlet_format("LogHawk")
+    ascii_banner = pyfiglet.figlet_format("loghawk")
     print(ascii_banner)
 
     # Add author and usage instructions
