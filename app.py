@@ -13,6 +13,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
+<header class="hero">
+    <h1>🦅 LogHawkX</h1>
+    <p>Upload a log file for analysis</p>
+</header>
 <head>
     <title>LogHawkX Analyzer</title>
     <link rel="stylesheet" href="/static/style.css">
