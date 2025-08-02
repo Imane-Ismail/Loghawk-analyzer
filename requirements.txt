@@ -3,4 +3,3 @@ Werkzeug==2.3.7
 pyfiglet
 colorama
 tqdm
-loghawk
