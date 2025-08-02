@@ -63,7 +63,7 @@ def upload_file():
                 # Run LogHawk CLI on uploaded file
                 try:
                     result = subprocess.run(
-                        ['python3', 'LogHawk/loghawk_cli.py', filepath],
+                        ['python3', 'loghawk/loghawk_cli.py', filepath],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE,
                         text=True,
