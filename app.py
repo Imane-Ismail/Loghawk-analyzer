@@ -28,7 +28,7 @@ def index():
             file.save(filepath)
 
             try:
-                result = subprocess.check_output(['python3', 'loghawk/loghawk.py', filepath], text=True)
+                result = subprocess.check_output(['python3', 'loghawk/loghawk_cli.py', filepath], text=True)
             except subprocess.CalledProcessError as e:
                 result = f"Error running LogHawk: {e}"
 
