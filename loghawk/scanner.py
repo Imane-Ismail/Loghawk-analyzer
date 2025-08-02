@@ -3,7 +3,7 @@ import os
 import json
 from collections import defaultdict
 
-class LogHawk:
+class loghawk:
     """Log analysis tool for detecting suspicious activities."""
     
     patterns = {
