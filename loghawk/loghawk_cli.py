@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
 
     if os.path.isdir(args.input):
-        LogHawk.scan_directory(args.input)
+        loghawk.scan_directory(args.input)
     elif os.path.isfile(args.input):
         alerts, summary = loghawk.analyze_logs(args.input)
         if alerts:
