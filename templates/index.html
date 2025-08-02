@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LogHawk Analyzer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h1>🦅 LogHawkX Analyzer</h1>
+  <form action="/" method="POST" enctype="multipart/form-data">
+    <label>Select a log file:</label><br>
+    <input type="file" name="logfile" accept=".log,.txt"><br><br>
+    <button type="submit">Analyze</button>
+  </form>
+
+  {% if output %}
+    <h2>📄 Analysis Summary:</h2>
+    <pre>{{ output }}</pre>
+  {% endif %}
+</body>
+</html>
