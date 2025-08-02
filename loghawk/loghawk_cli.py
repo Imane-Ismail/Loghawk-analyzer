@@ -5,7 +5,7 @@ import argparse
 from loghawk.scanner import loghawk
 
 def main():
-    ascii_banner = pyfiglet.figlet_format("LogHawk")
+    ascii_banner = pyfiglet.figlet_format("loghawk")
     print(ascii_banner)
     print("Your Log Analysis Tool\n")
 
@@ -16,7 +16,7 @@ def main():
     if os.path.isdir(args.input):
         LogHawk.scan_directory(args.input)
     elif os.path.isfile(args.input):
-        alerts, summary = LogHawk.analyze_logs(args.input)
+        alerts, summary = loghawk.analyze_logs(args.input)
         if alerts:
             print(f"\n[+] Suspicious events found in: {args.input}\n")
             for alert in alerts:
