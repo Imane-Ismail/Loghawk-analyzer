@@ -2,7 +2,7 @@ import sys
 import os
 import pyfiglet
 import argparse
-from loghawk.scanner import loghawk
+from loghawk.scanner import LogHawk
 
 def main():
     ascii_banner = pyfiglet.figlet_format("loghawk")
