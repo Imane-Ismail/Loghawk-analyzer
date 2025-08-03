@@ -1,29 +1,26 @@
 import os
 import subprocess
+import sys
+import uuid
 from flask import Flask, request, render_template_string
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'log', 'txt', 'json', 'csv'}
 
-# Ensure uploads folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# HTML template
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html>
-<header class="hero">
-    <h1>🦅 LogHawkX</h1>
-    <p>Upload a log file for analysis</p>
-</header>
 <head>
     <title>LogHawkX Analyzer</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <header class="hero">
-        <h1>LogHawkX</h1>
+        <h1>🦅 LogHawkX</h1>
         <p>Upload a log file for analysis</p>
     </header>
     <section>
@@ -43,8 +40,7 @@ HTML_TEMPLATE = '''
 '''
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -57,13 +53,16 @@ def upload_file():
             if file.filename == '':
                 output = "⚠️ No file selected."
             elif allowed_file(file.filename):
-                filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+                # Sanitize filename and create unique filename to avoid overwrite
+                filename = secure_filename(file.filename)
+                unique_filename = f"{uuid.uuid4().hex}_{filename}"
+                filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
                 file.save(filepath)
 
                 # Run LogHawk CLI on uploaded file
                 try:
                     result = subprocess.run(
-                        ['python3', 'loghawk/loghawk_cli.py', filepath],
+                        [sys.executable, 'loghawk/loghawk_cli.py', filepath],
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE,
                         text=True,
