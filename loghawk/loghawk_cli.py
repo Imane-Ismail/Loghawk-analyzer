@@ -5,7 +5,7 @@ import argparse
 from loghawk.scanner import LogHawk
 
 def main():
-    ascii_banner = pyfiglet.figlet_format("loghawk")
+    ascii_banner = pyfiglet.figlet_format("LogHawk")
     print(ascii_banner)
     print("Your Log Analysis Tool\n")
 
