@@ -1,2 +1,2 @@
 # LogHawk package initialization
-from .scanner import loghawk
+from .scanner import LogHawk
