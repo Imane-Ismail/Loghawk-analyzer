@@ -2,7 +2,7 @@ import sys
 import os
 import pyfiglet
 import argparse
-from .scanner import LogHawk
+from loghawk.scanner import LogHawk
 
 def run_analysis(input_path):
     loghawk = LogHawk()
