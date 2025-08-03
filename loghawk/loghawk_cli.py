@@ -16,7 +16,7 @@ def main():
     if os.path.isdir(args.input):
         loghawk.scan_directory(args.input)
     elif os.path.isfile(args.input):
-        alerts, summary = loghawk.analyze_logs(args.input)
+        alerts, summary = LogHawk.analyze_logs(args.input)
         if alerts:
             print(f"\n[+] Suspicious events found in: {args.input}\n")
             for alert in alerts:
