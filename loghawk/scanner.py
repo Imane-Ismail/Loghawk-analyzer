@@ -1,77 +1,53 @@
-import re
 import os
-import json
-from collections import defaultdict
+import re
+from datetime import datetime
 
 class LogHawk:
-    """Log analysis tool for detecting suspicious activities."""
-    
-    patterns = {
-        "Failed Logins": re.compile(r"Failed login|authentication failure", re.IGNORECASE),
-        "Lateral Movement": re.compile(r"(RDP|SMB) connection from .*", re.IGNORECASE),
-        "Encoded PowerShell": re.compile(r"powershell.*-e\s+[A-Za-z0-9+/=]+", re.IGNORECASE),
-        "Suspicious Execution": re.compile(r"cmd\.exe|wscript|cscript|rundll32|regsvr32", re.IGNORECASE),
-        "Privilege Escalation": re.compile(r"(SeDebugPrivilege|SeAssignPrimaryTokenPrivilege)", re.IGNORECASE),
-        "Unusual Network Activity": re.compile(r"(nc.exe|nmap|mimikatz|Powershell Invoke-WebRequest)", re.IGNORECASE)
-    }
+    def __init__(self):
+        self.suspicious_patterns = [
+            ("Failed Login", r"Failed login|authentication failed"),
+            ("PowerShell Encoded", r"powershell.*-enc"),
+            ("Netcat Usage", r"nc\s"),
+        ]
 
-    timestamp_pattern = re.compile(r"(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})")
-
-    @classmethod
-    def analyze_logs(cls, log_file):
-        """Scans a log file for suspicious patterns."""
+    def analyze_logs(self, filepath):
         alerts = []
-        event_summary = defaultdict(int)
+        summary = {}
 
-        with open(log_file, "r", encoding="utf-8", errors="ignore") as file:
-            for line_number, line in enumerate(file, start=1):
-                for category, pattern in cls.patterns.items():
-                    if pattern.search(line):
-                        timestamp_match = cls.timestamp_pattern.search(line)
-                        timestamp = timestamp_match.group(1) if timestamp_match else "No Timestamp"
-                        alert_message = {
-                            "Category": category,
-                            "Timestamp": timestamp,
-                            "Line Number": line_number,
-                            "Log Entry": line.strip()
-                        }
-                        alerts.append(alert_message)
-                        event_summary[category] += 1
+        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+            lines = f.readlines()
 
-        return alerts, event_summary
+        for i, line in enumerate(lines, start=1):
+            for category, pattern in self.suspicious_patterns:
+                if re.search(pattern, line, re.IGNORECASE):
+                    timestamp = self.extract_timestamp(line)
+                    alerts.append({
+                        "Category": category,
+                        "Line Number": i,
+                        "Log Entry": line.strip(),
+                        "Timestamp": timestamp or "N/A"
+                    })
+                    summary[category] = summary.get(category, 0) + 1
 
-    @classmethod
-    def scan_directory(cls, log_dir, output_file="loghawk_report.txt"):
-        """Scans all log files in a directory and saves results."""
-        all_alerts = []
-        total_summary = defaultdict(int)
+        return alerts, summary
 
-        with open(output_file, "w", encoding="utf-8") as report:
-            report.write("=== LogHawk Security Report ===\n")
+    def extract_timestamp(self, line):
+        match = re.search(r"\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}", line)
+        return match.group(0) if match else None
 
-            for root, _, files in os.walk(log_dir):
-                for file in files:
-                    if file.endswith(".log"):
-                        log_path = os.path.join(root, file)
-                        print(f"\nScanning {log_path}...")
-                        alerts, summary = cls.analyze_logs(log_path)
-
-                        if alerts:
-                            report.write(f"\n[+] Suspicious events found in: {log_path}\n")
-                            for alert in alerts:
-                                report.write(json.dumps(alert, indent=2) + "\n")
-
+    def scan_directory(self, directory):
+        print(f"[+] Scanning directory: {directory}")
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if file.endswith(('.log', '.txt', '.json')):
+                    path = os.path.join(root, file)
+                    print(f"\n--- Analyzing {path} ---")
+                    alerts, summary = self.analyze_logs(path)
+                    if alerts:
+                        for alert in alerts:
+                            print(f"[{alert['Category']}] {alert['Timestamp']} - Line {alert['Line Number']}: {alert['Log Entry']}")
+                        print("\n=== Summary of Detected Events ===")
                         for category, count in summary.items():
-                            total_summary[category] += count
-
-                        all_alerts.extend(alerts)
-
-            report.write("\n=== Summary of Detected Events ===\n")
-            for category, count in total_summary.items():
-                report.write(f"{category}: {count} occurrences\n")
-
-        print("\n=== Log Analysis Completed ===")
-        for category, count in total_summary.items():
-            print(f"{category}: {count} occurrences")
-
-        print(f"\n[+] Detailed report saved to: {output_file}")
+                            print(f"{category}: {count} event(s)")
+                    else:
+                        print("[-] No suspicious events detected.")
