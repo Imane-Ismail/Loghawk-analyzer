@@ -54,4 +54,39 @@ def upload_file():
             output = "⚠️ No file part in request."
         else:
             file = request.files['logfile']
-            if file.fil
+            if file.filename == '':
+                output = "⚠️ No file selected."
+            elif allowed_file(file.filename):
+                # Sanitize and save with unique filename
+                filename = secure_filename(file.filename)
+                unique_filename = f"{uuid.uuid4().hex}_{filename}"
+                filepath = os.path.join(UPLOAD_FOLDER, unique_filename)
+                file.save(filepath)
+
+                # Call the LogHawk CLI with --input argument
+                try:
+                    result = subprocess.run(
+                        [sys.executable, '-m', 'loghawk.loghawk_cli', '--input', filepath],
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                        check=True
+                    )
+                    output = result.stdout
+                except subprocess.CalledProcessError as e:
+                    output = f"""
+❌ Error running LogHawk:
+Exit Code: {e.returncode}
+STDOUT:
+{e.stdout}
+
+STDERR:
+{e.stderr}
+                    """
+            else:
+                output = "⚠️ Invalid file type. Allowed: .log, .txt, .json, .csv"
+    return render_template_string(HTML_TEMPLATE, output=output)
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
