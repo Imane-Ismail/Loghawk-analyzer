@@ -2,7 +2,7 @@ import sys
 import os
 import pyfiglet
 import argparse
-from loghawk.scanner import LogHawk
+from loghawk import LogHawk  # Now uses the fixed import
 
 def main():
     ascii_banner = pyfiglet.figlet_format("LogHawk")
@@ -13,10 +13,12 @@ def main():
     parser.add_argument("--input", type=str, help="Path to the log file or directory", required=True)
     args = parser.parse_args()
 
+    loghawk = LogHawk()
+
     if os.path.isdir(args.input):
         loghawk.scan_directory(args.input)
     elif os.path.isfile(args.input):
-        alerts, summary = LogHawk.analyze_logs(args.input)
+        alerts, summary = loghawk.analyze_logs(args.input)
         if alerts:
             print(f"\n[+] Suspicious events found in: {args.input}\n")
             for alert in alerts:
