@@ -5,9 +5,28 @@ from datetime import datetime
 class LogHawk:
     def __init__(self):
         self.suspicious_patterns = [
+            # Authentication and brute force
             ("Failed Login", r"Failed login|authentication failed"),
+            ("Brute Force Attempt", r"Multiple failed login attempts"),
+            
+            # PowerShell abuse
             ("PowerShell Encoded", r"powershell.*-enc"),
-            ("Netcat Usage", r"nc\s"),
+            ("PowerShell Download", r"powershell.*Invoke-WebRequest|Invoke-Expression|wget|curl"),
+
+            # Network and C2
+            ("Netcat Usage", r"\snc\s"),
+            ("C2 Beaconing", r"Outbound connection|known C2|DNS resolution of known C2"),
+
+            # File and process indicators
+            ("Suspicious File Write", r"C:\\.*\\.*\\(dropper|evil).*\.exe|\.dll"),
+            ("Suspicious Process Spawning", r"spawn of child process.*(cmd|powershell|wmic|mshta)"),
+
+            # Threat intelligence mapping
+            ("ATT&CK Technique Detected", r"MITRE ATT&CK MAPPING:"),
+
+            # Web attack indicators
+            ("SQL Injection Attempt", r"('|\%27)[\s]*or[\s]+1=1|UNION\s+SELECT|select\s+\*\s+from"),
+            ("Cross-Site Scripting (XSS)", r"<script>|%3Cscript%3E|onerror=|alert\("),
         ]
 
     def analyze_logs(self, filepath):
@@ -32,6 +51,7 @@ class LogHawk:
         return alerts, summary
 
     def extract_timestamp(self, line):
+        # Look for ISO 8601 or Windows log formats
         match = re.search(r"\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}", line)
         return match.group(0) if match else None
 
