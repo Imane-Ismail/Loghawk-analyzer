@@ -6,25 +6,12 @@
 </head>
 <body>
   <h1>🦅 LogHawkX Analyzer</h1>
-
-  <!-- 📘 User Guidance Message -->
-  <div class="upload-instructions">
-    <p><strong>Instructions:</strong> Upload a log file for automated analysis using LogHawkX. Make sure your file meets the following requirements:</p>
-    <ul>
-      <li>Allowed file types: <code>.log</code>, <code>.txt</code>, <code>.json</code>, <code>.csv</code></li>
-      <li>Maximum file size: 5 MB</li>
-    </ul>
-    <p>Once uploaded, LogHawkX will scan for threats, validate the file, and display a summary report.</p>
-  </div>
-
-  <!-- 🔍 Upload Form -->
   <form action="/" method="POST" enctype="multipart/form-data">
     <label>Select a log file:</label><br>
-    <input type="file" name="logfile" accept=".log,.txt,.json,.csv" required><br><br>
+    <input type="file" name="logfile" accept=".log,.txt"><br><br>
     <button type="submit">Analyze</button>
   </form>
 
-  <!-- 🧾 Output Section -->
   {% if output %}
     <h2>📄 Analysis Summary:</h2>
     <pre>{{ output }}</pre>
