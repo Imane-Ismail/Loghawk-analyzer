@@ -6,21 +6,14 @@
 </head>
 <body>
   <h1>🦅 LogHawkX Analyzer</h1>
-
-  <p><strong>About LogHawkX:</strong>  
+    <p><strong>About LogHawkX:</strong>  
   LogHawkX is a lightweight threat detection tool that scans uploaded log files for indicators of suspicious and malicious activity, such as failed login attempts, PowerShell abuse, or potential web attacks.</p>
 
   <p><strong>Instructions:</strong>  
-  Upload a supported log file to analyze. LogHawkX will validate the file and display any detected security events.</p>
-
-  <ul>
-    <li>Allowed file types: <code>.log</code>, <code>.txt</code></li>
-    <li>Maximum file size: <strong>5 MB</strong></li>
-  </ul>
-
+  Upload a log file ( .log or .txt) to analyze. LogHawkX will validate the file and display any detected security events.</p>
   <form action="/" method="POST" enctype="multipart/form-data">
-    <label for="logfile">Select a log file:</label><br>
-    <input type="file" name="logfile" id="logfile" accept=".log,.txt" required><br><br>
+    <label>Select a log file:</label><br>
+    <input type="file" name="logfile" accept=".log,.txt"><br><br>
     <button type="submit">Analyze</button>
   </form>
 
