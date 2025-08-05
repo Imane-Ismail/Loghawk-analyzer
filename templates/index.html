@@ -1,25 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>LogHawk Analyzer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LogHawkX Analyzer</title>
   <link rel="stylesheet" href="/static/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f4f4f4;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+    .toggle-btn {
+      float: right;
+      margin-top: -3em;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
+  <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
   <h1>🦅 LogHawkX Analyzer</h1>
-    <p><strong>About LogHawkX:</strong>  
-  LogHawkX is a lightweight threat detection tool that scans uploaded log files for indicators of suspicious and malicious activity, such as failed login attempts, PowerShell abuse, or potential web attacks.</p>
 
-  <p><strong>Instructions:</strong>  
-  Upload a log file ( .log or .txt) to analyze. LogHawkX will validate the file and display any detected security events.</p>
+  <p><strong>About LogHawkX:</strong><br>
+  LogHawkX is a lightweight threat detection tool that scans uploaded log files for indicators of suspicious and malicious activity — such as failed login attempts, PowerShell abuse, or potential web-based attacks.</p>
+
+  <p><strong>Supported File Types:</strong><br>
+  • .log<br>
+  • .txt<br>
+  • .json<br>
+  • .csv</p>
+
+  <p><strong>File Size Limit:</strong><br>
+  Files up to <strong>5 MB</strong> are supported.</p>
+
+  <p><strong>How to Use:</strong><br>
+  Upload a supported log file using the form below. LogHawkX will analyze it and display any detected security events or anomalies.</p>
+
   <form action="/" method="POST" enctype="multipart/form-data">
-    <label>Select a log file:</label><br>
-    <input type="file" name="logfile" accept=".log,.txt"><br><br>
-    <button type="submit">Analyze</button>
+    <label><strong>Select a log file:</strong></label><br>
+    <input type="file" name="logfile" accept=".log,.txt,.json,.csv"><br><br>
+    <button type="submit">🔍 Analyze</button>
+  </form>
+
+  <hr>
+
+  <h2>✍️ Or Paste Log Content</h2>
+  <form action="/" method="POST">
+    <label><strong>Paste log content here:</strong></label><br>
+    <textarea name="logcontent" placeholder="Paste your log here..."></textarea><br>
+    <button type="submit">🔍 Analyze Pasted Log</button>
   </form>
 
   {% if output %}
     <h2>📄 Analysis Summary:</h2>
     <pre>{{ output }}</pre>
+
+    <form action="/download" method="POST">
+      <input type="hidden" name="output" value="{{ output | tojson | safe }}">
+      <button type="submit">📥 Download Report</button>
+    </form>
   {% endif %}
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+  </script>
 </body>
 </html>
