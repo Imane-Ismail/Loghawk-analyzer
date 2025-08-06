@@ -3,6 +3,13 @@ LogHawkX is a browser-based version of the original CLI-based LogHawk tool — p
 Also accessible at 👉 https://loghawkx.io
 
 Please follow the following steps to install LogHawk-analyzer:
+
 git clone https://github.com/Imane-Ismail/Loghawk-analyzer.git
+
 cd Loghawk-analyzer
+
 pip install .
+
+Once installed, you may use the following command to run LogHawk Analyzer
+
+loghawk --input <log file path>
